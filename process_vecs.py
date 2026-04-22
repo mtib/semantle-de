@@ -62,7 +62,10 @@ if __name__ == '__main__':
                 valid_nearest.append(word)
                 valid_nearest_mat.append(vec)
             if valid_guess(word) and not skip_db:
-                cursor.execute("""INSERT INTO guesses values (?, ?)""", (word, pickle.dumps(vec)))
+                # INSERT OR IGNORE: cc.de.300.vec occasionally contains the same
+                # token twice (differently-encoded whitespace splits), which
+                # would crash a plain INSERT on the UNIQUE word constraint.
+                cursor.execute("""INSERT OR IGNORE INTO guesses values (?, ?)""", (word, pickle.dumps(vec)))
             else:
                 eliminated += 1
             if n % 100000 == 0:
