@@ -22,9 +22,13 @@ const puzzleNumber = (today - initialDay) % numPuzzles;
 const yesterdayPuzzleNumber = (puzzleNumber + numPuzzles - 1) % numPuzzles;
 const storage = window.localStorage;
 let chrono_forward = 1;
-let prefersDarkColorScheme = false;
-// settings
-let darkMode = storage.getItem("darkMode") === 'true';
+const prefersDarkColorScheme =
+    window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+// settings — if the user has never toggled dark mode explicitly, inherit the
+// OS preference so the page isn't rendered with black-on-black guess rows.
+let darkMode = storage.getItem("darkMode") === null
+    ? prefersDarkColorScheme
+    : storage.getItem("darkMode") === 'true';
 let shareGuesses = storage.getItem("shareGuesses") === 'false' ? false: true;
 let shareTime = storage.getItem("shareTime") === 'false' ? false: true;
 let shareTopGuess = storage.getItem("shareTopGuess") === 'false' ? false: true;
@@ -68,15 +72,12 @@ function guessRow(similarity, oldGuess, percentile, guessNumber, guess) {
 <span class="progress-bar" style="width:${(1001 - percentile)/10}%">&nbsp;</span>
 </span>`;
     }
-    let color;
-    if (oldGuess === guess) {
-        color = '#c0c';
-    } else if (darkMode) {
-        color = '#fafafa';
-    } else {
-        color = '#000';
-    }
-    return `<tr><td>${guessNumber}</td><td style="color:${color}" onclick="select('${oldGuess}', secretVec);">${oldGuess}</td><td>${similarity.toFixed(2)}</td><td class="${closeClass}">${percentileText}${progress}
+    // Classes drive the colour so toggling dark mode later re-styles
+    // previously-rendered rows; baking `style="color:..."` per row meant
+    // the first render's colour stuck around and produced black-on-black
+    // when the user (or OS) switched to dark mode after guessing.
+    const wordClass = oldGuess === guess ? 'guess-word current' : 'guess-word';
+    return `<tr><td>${guessNumber}</td><td class="${wordClass}" onclick="select('${oldGuess}', secretVec);">${oldGuess}</td><td>${similarity.toFixed(2)}</td><td class="${closeClass}">${percentileText}${progress}
 </td></tr>`;
 
 }
@@ -239,10 +240,6 @@ ${(similarityStory.rest * 100).toFixed(2)}.
             storage.removeItem("startTime");
             storage.removeItem("endTime");
             storage.setItem("puzzleNumber", puzzleNumber);
-        }
-
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            prefersDarkColorScheme = true;
         }
 
         if (!storage.getItem("readRules")) {

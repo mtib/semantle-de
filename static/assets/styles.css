@@ -256,3 +256,15 @@ body.dark .overlay-button {
     font-weight: bold;
     width: 2em;
 }
+
+/* Guess words inherit the body colour so dark-mode toggles (and the OS
+   auto-detect) restyle rows that were rendered under the other theme. */
+.guess-word {
+    color: inherit;
+    cursor: pointer;
+}
+
+/* Highlight for the most recently entered guess, identical in both themes. */
+.guess-word.current {
+    color: #c0c;
+}
