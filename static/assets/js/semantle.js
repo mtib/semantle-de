@@ -93,17 +93,20 @@ function updateLocalTime() {
 }
 
 function solveStory(guesses, puzzleNumber) {
+    // Take the share URL from the live page so the copied message points at
+    // whichever instance the player is actually on, including self-hosts.
+    const shareUrl = window.location.origin;
     let guess_count = guesses.length - 1;
     let winOrGiveUp = 'aufgegebn.';
     if (storage.getItem("winState") == 1) {
         winOrGiveUp = 'gelöst!';
         guess_count += 1
         if (guess_count == 1) {
-            return `Ich habe Semantlich #${puzzleNumber} beim ersten Versuch erraten! Habe ich geschummelt, oder bin ich einfach nur gut? http://semantlich.johannesgaetjen.de`;
+            return `Ich habe Semantlich #${puzzleNumber} beim ersten Versuch erraten! Habe ich geschummelt, oder bin ich einfach nur gut? ${shareUrl}`;
         }
     }
     if (guess_count == 0) {
-        return `Ich habe Semantlich #${puzzleNumber} aufgegeben ohne auch nur einmal zu raten. http://semantlich.johannesgaetjen.de`;
+        return `Ich habe Semantlich #${puzzleNumber} aufgegeben ohne auch nur einmal zu raten. ${shareUrl}`;
     }
 
     let describe = function(similarity, percentile) {
@@ -164,7 +167,7 @@ function solveStory(guesses, puzzleNumber) {
     }
 
     return `Ich habe Semantlich #${puzzleNumber} (das Wortbedeutungsähnlichkeitsratespiel) ${winOrGiveUp}\n${guessCountInfo}` +
-    `${timeInfo}${topGuessMsg}${topInfo}http://semantlich.johannesgaetjen.de`;
+    `${timeInfo}${topGuessMsg}${topInfo}${shareUrl}`;
 }
 
 let Semantle = (function() {
