@@ -27,7 +27,9 @@ def dump_nearest(puzzle_num: int, word: str, words: List[str], mat: array, k: in
     result = zip(words_sorted, dists_sorted)
     closeness = dict()
     for idx, (w, d) in enumerate(result):
-        closeness[w] = (idx, d)
+        # float() unwraps the numpy scalar so Flask's JSON encoder can handle it
+        # regardless of whether the matrix is float32 or float64.
+        closeness[w] = (idx, float(d))
     closeness[word] = ("Gefunden!", 1)
     with open(f'data/near/{puzzle_num}.dat', 'wb') as f:
         pickle.dump(closeness, f)

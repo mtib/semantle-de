@@ -7,7 +7,9 @@ from numpy.linalg import norm
 
 
 def similarity(word1: str, word2: str) -> float:
-    return cosine_similarity(get_word_vec(word1), get_word_vec(word2))
+    # float() unwraps numpy scalars — matters when the stored vectors are
+    # float32, whose result type isn't JSON-serializable by Flask's encoder.
+    return float(cosine_similarity(get_word_vec(word1), get_word_vec(word2)))
 
 
 def get_word_vec(word: str) -> Optional[array]:

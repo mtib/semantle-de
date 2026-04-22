@@ -1,6 +1,7 @@
 import pickle
 from datetime import date, datetime
 
+import numpy as np
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from flask import (
@@ -22,8 +23,11 @@ scheduler.start()
 
 app = Flask(__name__)
 print("loading valid nearest")
-with open('data/valid_nearest.dat', 'rb') as f:
-    valid_nearest_words, valid_nearest_vecs = pickle.load(f)
+# Matrix is memory-mapped from .npy so we don't hold ~300MB of vectors resident;
+# numpy pages in rows on demand during similarity computation.
+with open('data/valid_nearest_words.pkl', 'rb') as f:
+    valid_nearest_words = pickle.load(f)
+valid_nearest_vecs = np.load('data/valid_nearest_mat.npy', mmap_mode='r')
 with open('data/secrets.txt', 'r', encoding='utf-8') as f:
     secrets = [l.strip() for l in f.readlines()]
 print("initializing nearest words for solutions")
