@@ -1,0 +1,12 @@
+services:
+  semantle-de:
+    build: .
+    container_name: semantle-de
+    restart: unless-stopped
+    ports:
+      - "16430:8000"
+    volumes:
+      - semantle-de-data:/app/data
+
+volumes:
+  semantle-de-data:

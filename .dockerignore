@@ -1,0 +1,25 @@
+.git
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+docker-entrypoint.sh
+readme.md
+LICENSE.txt
+__pycache__
+*.pyc
+.idea
+.vscode
+
+# Data is volume-mounted at runtime, never baked into the image.
+data/cc.de.300.vec
+data/cc.de.300.vec.gz
+data/German.zip
+data/de.dic
+data/readme.txt
+data/valid_guesses.db
+data/valid_guesses.db-journal
+data/valid_nearest.dat
+data/valid_nearest_mat.npy
+data/valid_nearest_words.pkl
+data/near/*.dat
